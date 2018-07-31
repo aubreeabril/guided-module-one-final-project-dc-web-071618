@@ -72,13 +72,25 @@ def species?
   end
 
 #---------- Foster methods
+  def create_foster
+    puts "Please enter your name."
+    Foster.create(name: gets.chomp)
+    puts "Welcome #{Foster.last.name}."
+    select_foster_id
+  end
+
   def select_foster_id
-    puts "Please select your foster ID."
+    puts "Please select your foster ID or select N if you are a new foster home."
     choices = Foster.all.map do |f|
       "#{f.id} - #{f.name}"
     end
     puts choices
-    foster_select_pet(gets.chomp)
+    response = gets.chomp
+      if response.downcase == "n"
+        create_foster
+      else
+      foster_select_pet(response)
+    end
   end
 
   def foster_select_pet(foster_id)
@@ -105,13 +117,26 @@ def species?
   end
 
 #--------- Shelter methods
+  def create_shelter
+    puts "What is the name of your shelter?"
+    Shelter.create(name: gets.chomp)
+    puts "Welcome #{Shelter.last.name}."
+    select_shelter_id
+  end
+
   def select_shelter_id
-    puts "Please select your shelter ID."
+    puts "Please select your shelter ID. If you are new to our system select N."
     choices = Shelter.all.map do |s|
       "#{s.id} - #{s.name}"
     end
     puts choices
-    shelter_options(gets.chomp)
+    response = gets.chomp
+
+    if response.downcase == "n"
+      create_shelter
+    else
+      shelter_options(response)
+    end
   end
 
   def shelter_options(s_id)
