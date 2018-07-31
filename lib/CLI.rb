@@ -16,7 +16,6 @@ def stray?
 
   answer = gets.chomp.downcase
   #returns Y or N
-
   if answer == "y"
     species?
   elsif answer == "n"
@@ -29,11 +28,11 @@ def stray?
 end
 
 def other_options
-  puts "Are you looking to foster(F) or are you a shelter?" ## exit method someday
+  puts "Are you looking to foster(F) or are you a shelter(S)?" ## exit method someday
   answer = gets.chomp.downcase
   if answer == "f"
     select_foster_id
-  elsif answer == "b"
+  elsif answer == "s"
     select_shelter_id
   elsif answer == 'x'
     puts "Goodbye"
@@ -79,10 +78,10 @@ def species?
       "#{f.id} - #{f.name}"
     end
     puts choices
-    select_pet(gets.chomp)
+    foster_select_pet(gets.chomp)
   end
 
-  def select_pet(foster_id)
+  def foster_select_pet(foster_id)
     choices = Animal.all.map do |a|
       "#{a.id} - #{a.name}"
     end
@@ -112,7 +111,26 @@ def species?
       "#{s.id} - #{s.name}"
     end
     puts choices
-    select_pet(gets.chomp)
+    shelter_options(gets.chomp)
+  end
+
+  def shelter_options(s_id)
+    puts "Hello #{Shelter.find(s_id).name}. How may we help you?  You may select an animal for your shelter(S) or view a list of foster homes currently fostering your animals(F))"
+    choice = gets.chomp.downcase
+    #TO DO: repalce if/elsif with case statements
+    if choice == "s"
+      select_pet(s_id)
+    elsif choice == "f"
+      show_list_of_foster_homes_by_shelter(s_id)
+    elsif choice == "x"
+      puts "Goodbye"
+    else shelter_options(s_id)
+    end
+  end
+
+  def show_list_of_foster_homes_by_shelter(s_id)
+    puts "The following animals associated with your shelter are being fostered by the indicated families:"
+    Animal.where(shelter_id: s_id).map {|p| puts "#{p.name} - #{p.foster.name}"}
   end
 
   def select_pet(s_id)
