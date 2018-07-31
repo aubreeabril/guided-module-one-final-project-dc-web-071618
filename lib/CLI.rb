@@ -12,7 +12,7 @@ def greet
 end
 
 def stray?
-  puts "Do you have a stray pet that needs to be housed? Y or N"
+  puts "Do you have a stray pet that needs to be housed? Y or N or X?"
 
   answer = gets.chomp.downcase
   #returns Y or N
@@ -20,11 +20,29 @@ def stray?
   if answer == "y"
     species?
   elsif answer == "n"
-    puts "Thanks. Call 911 for Emergencies"
+    other_options
+  elsif answer == 'x'
+    puts "Goodbye"
   else
     stray?
   end
 end
+
+def other_options
+  puts "Are you looking to foster(F) or are you a shelter?" ## exit method someday
+  answer = gets.chomp.downcase
+  if answer == "f"
+    select_foster_id
+  elsif answer == "b"
+    select_shelter_id
+  elsif answer == 'x'
+    puts "Goodbye"
+  else
+    stray?
+  end
+end
+
+# ----------- Animal methods
 
 def species?
   array =["cat", "dog", "bird"]
@@ -41,9 +59,86 @@ def species?
   def name?(species)
     puts "Please give this stray animal a name."
     animal_name = gets.chomp
-    puts "Thank you for registering a #{species}, #{animal_name} says woof, meow or chirp "
-  
+    puts "Thank you for registering a #{species}, #{animal_name}. Is this accurate? Y or N?"
+    if gets.chomp.downcase == "y"
+      create(animal_name, species)
+    else
+      stray?
+    end
   end
 
+  def create(name, species)
+    a1 = Animal.create(name: name, species: species)
+    puts "#{a1.name} has been assigned #{a1.id}."
+  end
 
+#---------- Foster methods
+  def select_foster_id
+    puts "Please select your foster ID."
+    choices = Foster.all.map do |f|
+      "#{f.id} - #{f.name}"
+    end
+    puts choices
+    select_pet(gets.chomp)
+  end
+
+  def select_pet(foster_id)
+    choices = Animal.all.map do |a|
+      "#{a.id} - #{a.name}"
+    end
+    puts choices
+    pet_id = gets.chomp
+    puts "We think you're the #{Foster.find(foster_id).name} and you want to foster #{Animal.find(pet_id).name}. Is this correct? Y or N?"
+    if gets.chomp.downcase == "y"
+      assign_pet_to_home(foster_id, pet_id)
+    elsif gets.chomp.downcase == 'n'
+      select_foster_id
+    elsif gets.chomp.downcase == 'x'
+      puts "Goodbye"
+    else
+      select_pet
+    end
+  end
+
+  def assign_pet_to_home(f_id, p_id)
+    Animal.find(p_id).update(foster_id: f_id)
+    puts "#{Animal.find(p_id).name} now lives with the #{Foster.find(f_id).name}."
+  end
+
+#--------- Shelter methods
+  def select_shelter_id
+    puts "Please select your shelter ID."
+    choices = Shelter.all.map do |s|
+      "#{s.id} - #{s.name}"
+    end
+    puts choices
+    select_pet(gets.chomp)
+  end
+
+  def select_pet(s_id)
+    choices = Animal.all.map do |a|
+      "#{a.id} - #{a.name}"
+    end
+    puts choices
+    pet_id = gets.chomp
+    puts "We think you're at #{Shelter.find(s_id).name} and you want to institutionalize #{Animal.find(pet_id).name}. Is this correct? Y or N?"
+    if gets.chomp.downcase == "y"
+      assign_pet_to_shelter(s_id, pet_id)
+    elsif gets.chomp.downcase == 'n'
+      select_shelter_id
+    elsif gets.chomp.downcase == 'x'
+      puts "Goodbye"
+    else
+      select_pet
+    end
+  end
+
+  def assign_pet_to_shelter(s_id, p_id)
+    Animal.find(p_id).update(shelter_id: s_id)
+    puts "#{Animal.find(p_id).name} is at #{Shelter.find(s_id).name}."
+  end
+
+  def show_fosters_to_shelters
+
+  end
 end # end of class
