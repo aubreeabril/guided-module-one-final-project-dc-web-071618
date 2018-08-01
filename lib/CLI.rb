@@ -125,14 +125,15 @@ def species?
   end
 
   def select_shelter_id
-    puts "Please select your shelter ID. If you are new to our system select N."
+    puts "Please select your shelter from the list below. If you are new to our system select and would like to add your shelter press 0."
     choices = Shelter.all.map do |s|
       "#{s.id} - #{s.name}"
     end
+    puts "0 - Add new shelter"
     puts choices
     response = gets.chomp
 
-    if response.downcase == "n"
+    if response == "0"
       create_shelter
     else
       shelter_options(response)
