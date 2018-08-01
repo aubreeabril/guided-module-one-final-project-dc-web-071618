@@ -1,9 +1,9 @@
 
 # -------shelters
 
-s1 = Shelter.create(name: "Pets for the Taking")
-s2 = Shelter.create(name: "ASPCA")
-s3 = Shelter.create(name: "Animal Control")
+s1 = Shelter.create(name: "Pets for the Taking", capacity: 4)
+s2 = Shelter.create(name: "ASPCA", capacity: 5)
+s3 = Shelter.create(name: "Animal Control", capacity: 5)
 
 # -------animals
 
@@ -17,6 +17,6 @@ a7 = Animal.create(name: "Fluffy", species: "bird")
 
 # -------fosters
 
-f1 = Foster.create(name: "Smiths")
-f2 = Foster.create(name: "Jones")
-f3 = Foster.create(name: "Greens")
+f1 = Foster.create(name: "Smiths", capacity: 2)
+f2 = Foster.create(name: "Jones", capacity: 2)
+f3 = Foster.create(name: "Greens", capacity: 2)

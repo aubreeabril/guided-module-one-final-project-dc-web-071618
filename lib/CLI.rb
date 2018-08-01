@@ -17,12 +17,13 @@ attr_accessor :species, :name
 
 # Greet Users so they know they are in the correct application
   def greet
-    puts "Welcome  You are in the right place to get help with Stray Pet Placement."
+    puts "Welcome, you are in the right place to get help with Stray Pet Placement."
     stray?
   end
   # Clarify that user is looking for Stray pet placement or something else
   def stray?
-    puts "Do you have a stray pet that needs to be placed into care? Select Y or N or X (to exit)?"
+    puts "Do you have a stray pet that needs to be placed into care?"
+    puts "Select Y or N or X (to exit)"
   # Mwthod changes all responses to lc, analyzes response and route user accordingly
   # Yes responses are sent to the Species method
   #No responses to the other_options method and x is sent to the Goodbye method
@@ -44,23 +45,22 @@ attr_accessor :species, :name
 end
 
 def other_options
-  puts "Are you looking to foster(F) or are you a shelter(S)? Select X to exit."
-  answer = gets.chomp.downcase
+  puts "Are you a shelter or a family looking to foster?\n"
+  puts "\t1. Shelter"
+  puts "\t2. Foster\n\n"
+  puts "\t0. Exit"
+  answer = gets.chomp
   case answer
-  when "f"
+  when "2"
     select_foster_id
-  when "s"
+  when "1"
     select_shelter_id
-  when 'x'
+  when "0"
     puts "Goodbye"
   else
     stray?
   end
 end
-
-#
-
-
 
   # ----------- Animal methods
   # When the user needs to place an animal, the first step is determine species.
@@ -223,9 +223,13 @@ end
 # If this option is selected, A list of all the shelter's animals
 #currently in Foster care is provided, sorted by foster family
     def show_list_of_foster_homes_by_shelter(s_id)
+      binding.pry
+      puts nil
       puts "The following animals associated with your shelter are being fostered by the indicated families:"
       Animal.where(shelter_id: s_id).map {|p| puts "#{p.name} - #{p.foster.name}"}
+
     end
+
 # this method iterates through all avaialble stray animals and sorts them by Shelter ID
 # This method verifies the Shelter
 # Method asks if they are willing to shelter a named stray animal,
