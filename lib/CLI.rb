@@ -23,7 +23,9 @@ attr_accessor :species, :name
   # Clarify that user is looking for Stray pet placement or something else
   def stray?
     puts "Do you have a stray pet that needs to be placed into care?"
-    puts "Select Y or N or X (to exit)"
+    puts "\t1. Yes"
+    puts "\t2. No\n\n"
+    puts "\t0. Exit"
   # Mwthod changes all responses to lc, analyzes response and route user accordingly
   # Yes responses are sent to the Species method
   #No responses to the other_options method and x is sent to the Goodbye method
@@ -33,11 +35,11 @@ attr_accessor :species, :name
 
   answer = gets.chomp.downcase
   case answer
-  when "y"
-    species?
-  when "n"
+  when "1"
+    animal_species?
+  when "2"
     other_options
-  when 'x'
+  when '0'
     puts "Goodbye"
   else
     stray?
@@ -67,26 +69,38 @@ end
   #Currently the code accomodates Dogs, Cats and Birds
   #the code could be enhanced to include other species by adding optons here
 
-  def species?
-    array =["cat", "dog", "bird"]
-    puts "What kind of animal is this? Cat, Dog or Bird??"
-    species_answer = gets.chomp.downcase
+  def animal_species?
+    array =["1", "2", "3"]
+    puts "What kind of animal is this?"
+    puts "\t1. Cat"
+    puts "\t2. Dog"
+    puts "\t3. Bird"
+    species_answer = gets.chomp
       if array.include?(species_answer)
-        name?(species_answer)
+        case species_answer
+        when "1"
+          animal_name?("cat")
+        when "2"
+          animal_name?("dog")
+        when "3"
+          animal_name?("bird")
+        end
       else
-        species?
+        animal_species?
       end
   end
 
   # The method asks that the stray pet be named.  This provides additional
   #identification data and adds a human element.
   #the "thank you" message provides a chance to verify the data before it is added
-    def name?(species)
-      puts "Everyone needs a name! Please give this stray animal a name."
-      animal_name = gets.chomp
-      puts "Thank you for registering the #{species}, #{animal_name}. Is this accurate? Y or N?"
-      if gets.chomp.downcase == "y"
-        create(animal_name, species)
+    def animal_name?(species)
+      puts "Everyone needs a name!\nPlease give this stray animal a name."
+      name = gets.chomp
+      puts "Thank you for registering the #{species}, #{name}.\nIs this accurate?"
+      puts "\t1. Yes"
+      puts "\t2. No"
+      if gets.chomp == "1"
+        animal_create(name, species)
       else
         stray?
       end
@@ -95,10 +109,10 @@ end
 # This method accepts the verified data and enters it into the Animals Table
 #It puts out a response giving the named animal a unique id number.
 #The name and the ID number provide a two step authentication for each entry
-  def create(name, species)
+  def animal_create(name, species)
     a1 = Animal.create(name: name, species: species)
     puts "#{a1.name} has been assigned a stray animal tracking id of #{a1.id}."
-    puts "Please use the name, #{a1.name} and id of #{a1.id} when inquiring about this stray. "
+    puts "Please use the name #{a1.name} and id of #{a1.id} when inquiring about this stray. "
   end
   #---------- Foster methods
   #Foster care providers are an important of the shelter system.
@@ -114,28 +128,45 @@ end
   # the next step has the Foster family enter their ID if they are registered or
   # provides them the opportunity to register as a Foster care family
   def select_foster_id
-    puts "Please select your foster ID or select N if you are a new foster home."
+    curr_fosters = Foster.all.map do |f|
+      f.id
+    end
+
+    puts "Please select your foster ID."
     choices = Foster.all.map do |f|
-      "#{f.id} - #{f.name}"
+      "\t#{f.id} - #{f.name}"
     end
+
     puts choices
+    puts "\n\tN - New foster home"
+    puts "\t0 - Exit"
+
     response = gets.chomp
-      if response.downcase == "n"
-        create_foster
-      else
-        foster_options(response)
-      end
+    if curr_fosters.include?(response.to_i)
+      foster_options(response)
+    elsif response == "0"
+      puts "Goodbye."
+    elsif response.downcase == "n"
+      create_foster
+    else
+      puts "Please enter a valid ID."
+      select_foster_id
     end
+  end
+
 # method to give choices for fosters
   def foster_options(f_id)
-    puts "Hello #{Foster.find(f_id).name}. How may we help you?  You may select an animal to foster(F) or some other thing(O)."
+    puts "Hello #{Foster.find(f_id).name}.\nHow may we help you?"
+    puts "\t1. Select an animal to foster."
+    puts "\t2. New method listing current pets?\n\n"
+    puts "\t0. Exit"
     choice = gets.chomp.downcase
     case choice
-    when "f"
+    when "1"
       foster_select_pet(f_id)
-    when "o"
+    when "2"
       puts "Another method to show shelters and current pets?"
-    when "x"
+    when "0"
       puts "Goodbye"
     else
       foster_options(f_id)
@@ -148,16 +179,21 @@ end
   #this information is verified before proceding
     def foster_select_pet(foster_id)
       choices = Animal.all.map do |a|
-        "#{a.id} - #{a.name}"
+        "\t#{a.id} - #{a.name}"
       end
       puts choices
       pet_id = gets.chomp
-      puts "Thank you #{Foster.find(foster_id).name} family. You want to foster #{Animal.find(pet_id).name}. Is this correct? Y or N?"
-      if gets.chomp.downcase == "y"
+      puts "Thank you #{Foster.find(foster_id).name} family. \nYou want to foster #{Animal.find(pet_id).name}. \nIs this correct?"
+      puts "\t1. Yes"
+      puts "\t2. No\n\n"
+      puts "\t0. Exit"
+      response = gets.chomp
+      case response
+      when"1"
         assign_pet_to_home(foster_id, pet_id)
-      elsif gets.chomp.downcase == 'n'
+      when '2'
         select_foster_id
-      elsif gets.chomp.downcase == 'x'
+      when '0'
         puts "Goodbye"
       else
         select_pet
@@ -239,16 +275,22 @@ end
 
     def select_pet(s_id)
       choices = Animal.all.map do |a|
-        "#{a.id} - #{a.name}"
+        "\t#{a.id} - #{a.name}"
       end
+
       puts choices
       pet_id = gets.chomp
-      puts "The #{Shelter.find(s_id).name} is a warm welcoming place, Thank you for providing shelter to #{Animal.find(pet_id).name}. Is this correct? Y or N?"
-      if gets.chomp.downcase == "y"
+      puts "The #{Shelter.find(s_id).name} is a warm welcoming place. \nThank you for providing shelter to #{Animal.find(pet_id).name}. \nIs this correct?"
+      puts "\t1. Yes"
+      puts "\t2. No\n\n"
+      puts "\t0. Exit"
+      response = gets.chomp
+      case response
+      when "1"
         assign_pet_to_shelter(s_id, pet_id)
-      elsif gets.chomp.downcase == 'n'
+      when "2"
         select_shelter_id
-      elsif gets.chomp.downcase == 'x'
+      when "0"
         puts "Goodbye"
       else
         select_pet
