@@ -13,6 +13,8 @@ attr_accessor :species, :name
 #create class variables
 @@species="Stray_animal"
 @@name="Something_different"
+
+
 # Greet Users so they know they are in the correct application
   def greet
     puts "Welcome  You are in the right place to get help with Stray Pet Placement."
@@ -26,32 +28,39 @@ attr_accessor :species, :name
   #No responses to the other_options method and x is sent to the Goodbye method
   #if neither Y, N or x is entered the program will ask again.
 
-    answer = gets.chomp.downcase
     #returns Y or N from user as lowercase
-    if answer == "y"
-      species?
-    elsif answer == "n"
-      other_options
-    elsif answer == 'x'
-      puts "Goodbye"
-    else
-      stray?
-    end
-  end
 
-  def other_options
-    puts "Are you looking to foster(F) or are you a shelter(S)?" ## exit method someday
-    answer = gets.chomp.downcase
-    if answer == "f"
-      select_foster_id
-    elsif answer == "s"
-      select_shelter_id
-    elsif answer == 'x'
-      puts "Goodbye"
-    else
-      stray?
-    end
+  answer = gets.chomp.downcase
+  case answer
+  when "y"
+    species?
+  when "n"
+    other_options
+  when 'x'
+    puts "Goodbye"
+  else
+    stray?
   end
+end
+
+def other_options
+  puts "Are you looking to foster(F) or are you a shelter(S)? Select X to exit."
+  answer = gets.chomp.downcase
+  case answer
+  when "f"
+    select_foster_id
+  when "s"
+    select_shelter_id
+  when 'x'
+    puts "Goodbye"
+  else
+    stray?
+  end
+end
+
+#
+
+
 
   # ----------- Animal methods
   # When the user needs to place an animal, the first step is determine species.
@@ -67,8 +76,8 @@ attr_accessor :species, :name
       else
         species?
       end
+  end
 
-    end
   # The method asks that the stray pet be named.  This provides additional
   #identification data and adds a human element.
   #the "thank you" message provides a chance to verify the data before it is added
@@ -82,15 +91,15 @@ attr_accessor :species, :name
         stray?
       end
     end
-  # This method accepts the verified data and enters it into the Animals Table
-  #It puts out a response giving the named animal a unique id number.
-  #The name and the ID number provide a two step authentication for each entry
-    def create(name, species)
-      a1 = Animal.create(name: name, species: species)
-      puts "#{a1.name} has been assigned a stray animal tracking id of #{a1.id}."
-      puts "Please use the name, #{a1.name} and id of #{a1.id} when inquiring about this stray. "
-    end
 
+# This method accepts the verified data and enters it into the Animals Table
+#It puts out a response giving the named animal a unique id number.
+#The name and the ID number provide a two step authentication for each entry
+  def create(name, species)
+    a1 = Animal.create(name: name, species: species)
+    puts "#{a1.name} has been assigned a stray animal tracking id of #{a1.id}."
+    puts "Please use the name, #{a1.name} and id of #{a1.id} when inquiring about this stray. "
+  end
   #---------- Foster methods
   #Foster care providers are an important of the shelter system.
   #First we identify if the Foster family is already registered in the system
@@ -104,21 +113,35 @@ attr_accessor :species, :name
     end
   # the next step has the Foster family enter their ID if they are registered or
   # provides them the opportunity to register as a Foster care family
-
-    def select_foster_id
-      puts "Please select your foster ID or select N if you are a new foster home."
-      choices = Foster.all.map do |f|
-        "#{f.id} - #{f.name}"
-      end
-      puts choices
-      response = gets.chomp
-        if response.downcase == "n"
-          create_foster
-        else
-        foster_select_pet(response)
+  def select_foster_id
+    puts "Please select your foster ID or select N if you are a new foster home."
+    choices = Foster.all.map do |f|
+      "#{f.id} - #{f.name}"
+    end
+    puts choices
+    response = gets.chomp
+      if response.downcase == "n"
+        create_foster
+      else
+        foster_options(response)
       end
     end
-######______________######______check with John and Aubree about process???????
+# method to give choices for fosters
+  def foster_options(f_id)
+    puts "Hello #{Foster.find(f_id).name}. How may we help you?  You may select an animal to foster(F) or some other thing(O)."
+    choice = gets.chomp.downcase
+    case choice
+    when "f"
+      foster_select_pet(f_id)
+    when "o"
+      puts "Another method to show shelters and current pets?"
+    when "x"
+      puts "Goodbye"
+    else
+      foster_options(f_id)
+    end
+end
+
 
   # this code allows the registered Foster families to
   #select an availble stray needing housing
@@ -129,7 +152,7 @@ attr_accessor :species, :name
       end
       puts choices
       pet_id = gets.chomp
-      puts "Thank you #{Foster.find(foster_id).name}family. You want to foster #{Animal.find(pet_id).name}. Is this correct? Y or N?"
+      puts "Thank you #{Foster.find(foster_id).name} family. You want to foster #{Animal.find(pet_id).name}. Is this correct? Y or N?"
       if gets.chomp.downcase == "y"
         assign_pet_to_home(foster_id, pet_id)
       elsif gets.chomp.downcase == 'n'
