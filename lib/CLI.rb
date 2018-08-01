@@ -54,7 +54,7 @@ def other_options
   when "2"
     select_foster_id
   when "1"
-    select_shelter_id
+    shelter_select_id
   when "0"
     puts "Goodbye"
   else
@@ -178,57 +178,83 @@ end
   #Users are asked to identify which shelter they are affiliated with by name
   #and they are welcomed to the application space
 
-    def create_shelter
-      puts "What is the name of your shelter?"
+    def shelter_create
+      #Shelter Users are asked to selected their ID if already registered
+      puts "Please enter the name of your shelter below:"
       Shelter.create(name: gets.chomp)
       puts "Welcome #{Shelter.last.name}."
-      select_shelter_id
+      shelter_select_id
     end
-    #Shelter Users are asked to selected their ID if already registered
-    def select_shelter_id
-      puts "Please select your shelter ID. If you are new to our system select N."
-      choices = Shelter.all.map do |s|
-        "#{s.id} - #{s.name}"
+
+    def shelter_select_id
+      #If shelter is not already in the system, they can register here
+      #and are assigned a shelter # ID
+      #If they do not want to register - they are given option
+      #to select an avaialble stray for placement at their shelter
+      #or to view a list of the Foster homes currently fostering an animal for them
+      curr_shelters = Shelter.all.map do |s| s.id
       end
+
+      puts "Please select your shelter ID from the list below by entering your shelter's ID. \n If you do not see your shelter listed and would like to be entered into our systems, enter 'N' for New."
+
+      choices = Shelter.all.map do |s|
+        "\t#{s.id} - #{s.name}"
+      end
+
+      puts "\n"
       puts choices
-      response = gets.chomp
-    #If shelter is not already in the system, they can register here
-    #and are assigned a shelter # ID
-    #If they do not want to register - they are given option
-    #to select an avaialble stray for placement at their shelter
-    #or to view a list of the Foster homes currently fostering an animal for them
+      puts "\tN - New shelter\n\n"
+      puts "\t0. Exit"
 
-    ######______________######______check with John and Aubree about process???????
-
-      if response.downcase == "n"
-        create_shelter
+      answer = gets.chomp
+      if curr_shelters.include?(answer.to_i)
+        shelter_options(answer)
+      elsif answer == "0"
+        puts "Goodbye"
+      elsif answer.downcase == "n"
+        shelter_create
       else
-        shelter_options(response)
+        puts "Pleae enter a valid ID."
+        shelter_select_id
       end
     end
 
     def shelter_options(s_id)
-      puts "Hello #{Shelter.find(s_id).name}. How may we help you? You may select an animal for your shelter(S) or view a list of foster homes currently fostering your animals(F))"
-      choice = gets.chomp.downcase
-      #TO DO: repalce if/elsif with case statements
-      if choice == "s"
+      puts "Hello #{Shelter.find(s_id).name}. \nHow may we help you? \nYou may select an animal for your shelter or view a list of foster homes currently fostering your shelter's animals. \nPlease select from the options below:"
+      puts "\n\t1. Select an animal for your shelter"
+      puts "\t2. View a list of homes fostering your shelter's animals"
+      puts "\n\t0. Exit"
+      choice = gets.chomp
+
+      if choice == "1"
         select_pet(s_id)
-      elsif choice == "f"
-        show_list_of_foster_homes_by_shelter(s_id)
-      elsif choice == "x"
+      elsif choice == "2"
+        shelters_show_list_of_foster_homes_by_shelter(s_id)
+      elsif choice == "0"
         puts "Goodbye"
-      else shelter_options(s_id)
+      else
+        shelter_options(s_id)
       end
     end
 # If this option is selected, A list of all the shelter's animals
 #currently in Foster care is provided, sorted by foster family
-    def show_list_of_foster_homes_by_shelter(s_id)
-      binding.pry
-      puts nil
-      puts "The following animals associated with your shelter are being fostered by the indicated families:"
-      Animal.where(shelter_id: s_id).map {|p| puts "#{p.name} - #{p.foster.name}"}
+  def shelters_show_list_of_foster_homes_by_shelter(s_id)
+    puts "The following animals associated with your shelter are being fostered by the indicated families:\n"
 
+    Animal.where(shelter_id: s_id).map {|p| puts "\t#{p.name} - #{p.foster.name}"}
+
+    puts "Would you like to continue using our system or have you completed your tasks?\nPlease select from the options below:"
+    puts "\n\t 1. Return to the shelter menu"
+    puts "\n\t 0. Exit"
+    choice = gets.chomp
+
+    if choice == "1"
+      shelter_options(s_id)
+    elsif choice == "0"
+      puts "Goodbye"
+    else shelters_show_list_of_foster_homes_by_shelter(s_id)
     end
+  end
 
 # this method iterates through all avaialble stray animals and sorts them by Shelter ID
 # This method verifies the Shelter
@@ -238,27 +264,37 @@ end
 #asked again to verify their shelter status or sent to the goodby method
 
     def select_pet(s_id)
+      current_animals = Animal.all.map do |a|
+        a.id
+      end
+      puts "Please enter the number of the animal you wish to associate with your facility. You may select from the animals below:\n"
       choices = Animal.all.map do |a|
-        "#{a.id} - #{a.name}"
+        "\t#{a.id} - #{a.name}"
       end
+      puts ""
       puts choices
+      puts "\n\t 0. Exit"
+
       pet_id = gets.chomp
-      puts "The #{Shelter.find(s_id).name} is a warm welcoming place, Thank you for providing shelter to #{Animal.find(pet_id).name}. Is this correct? Y or N?"
-      if gets.chomp.downcase == "y"
-        assign_pet_to_shelter(s_id, pet_id)
-      elsif gets.chomp.downcase == 'n'
-        select_shelter_id
-      elsif gets.chomp.downcase == 'x'
+      if pet_id == "0"
         puts "Goodbye"
-      else
-        select_pet
-      end
+      elsif current_animals.include?(pet_id.to_i)
+        puts "\n#{Shelter.find(s_id).name} is a warm welcoming place, even to animals like #{Animal.find(pet_id).name}. Are you sure you would like to add #{Animal.find(pet_id).name} to your animals?\n"
+        puts "\n\t1. Yes"
+        puts "\t2. No"
+          if gets.chomp == "1"
+            assign_pet_to_shelter(s_id, pet_id)
+          elsif gets.chomp == "2"
+            shelter_select_id
+          else select_pet(s_id)
+          end
+        end
     end
 # If the shelter agress to accept the particular animal - the placement is made
 # And a unique shelter ID is assigned to this placement
     def assign_pet_to_shelter(s_id, p_id)
       Animal.find(p_id).update(shelter_id: s_id)
-      puts "#{Animal.find(p_id).name} is at #{Shelter.find(s_id).name}."
+      puts "\nThank you. \n#{Animal.find(p_id).name} is now under #{Shelter.find(s_id).name}'s watchful eyes."
     end
     ######______________######______check with John and Aubree about process???????
 #If the shelter is not able to accept the stray, they can ask for a
