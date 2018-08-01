@@ -22,7 +22,7 @@ attr_accessor :species, :name
   end
   # Clarify that user is looking for Stray pet placement or something else
   def stray?
-    puts "Do you have a stray pet that needs to be placed into care? Select Y or N or X (to exit)?"
+    puts "Do you have a stray pet that needs to be placed into care? \n\nSelect Y or N or X (to exit)?"
   # Mwthod changes all responses to lc, analyzes response and route user accordingly
   # Yes responses are sent to the Species method
   #No responses to the other_options method and x is sent to the Goodbye method
