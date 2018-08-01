@@ -15,12 +15,12 @@ def stray?
   puts "Do you have a stray pet that needs to be housed? Y or N or X?"
 
   answer = gets.chomp.downcase
-  #returns Y or N
-  if answer == "y"
+  case answer
+  when "y"
     species?
-  elsif answer == "n"
+  when "n"
     other_options
-  elsif answer == 'x'
+  when 'x'
     puts "Goodbye"
   else
     stray?
@@ -28,13 +28,14 @@ def stray?
 end
 
 def other_options
-  puts "Are you looking to foster(F) or are you a shelter(S)?" ## exit method someday
+  puts "Are you looking to foster(F) or are you a shelter(S)? Select X to exit."
   answer = gets.chomp.downcase
-  if answer == "f"
+  case answer
+  when "f"
     select_foster_id
-  elsif answer == "s"
+  when "s"
     select_shelter_id
-  elsif answer == 'x'
+  when 'x'
     puts "Goodbye"
   else
     stray?
@@ -43,16 +44,15 @@ end
 
 # ----------- Animal methods
 
-def species?
-  array =["cat", "dog", "bird"]
-  puts "What kind of animal is this? Cat, Dog or Bird??"
-  species_answer = gets.chomp.downcase
+  def species?
+    array =["cat", "dog", "bird"]
+    puts "What kind of animal is this? Cat, Dog or Bird??"
+    species_answer = gets.chomp.downcase
     if array.include?(species_answer)
       name?(species_answer)
     else
       species?
     end
-
   end
 
   def name?(species)
@@ -80,7 +80,7 @@ def species?
   end
 
   def select_foster_id
-    puts "Please select your foster ID or select N if you are a new foster home."
+    puts "Please select your foster ID. If you are new to our system select N."
     choices = Foster.all.map do |f|
       "#{f.id} - #{f.name}"
     end
@@ -89,7 +89,23 @@ def species?
       if response.downcase == "n"
         create_foster
       else
-      foster_select_pet(response)
+        foster_options(response)
+    end
+  end
+# method to give choices for fosters
+  def foster_options(f_id)
+    puts "Hello #{Foster.find(f_id).name}. How may we help you?  You may select an animal to foster(F) or some other thing(O)."
+    choice = gets.chomp.downcase
+
+    case choice
+    when "f"
+      select_pet(f_id)
+    when "o"
+      puts "Another method to show shelters and current pets?"
+    when "x"
+      puts "Goodbye"
+    else
+      foster_options(f_id)
     end
   end
 
@@ -100,15 +116,17 @@ def species?
     puts choices
     pet_id = gets.chomp
     puts "We think you're the #{Foster.find(foster_id).name} and you want to foster #{Animal.find(pet_id).name}. Is this correct? Y or N?"
-    if gets.chomp.downcase == "y"
-      assign_pet_to_home(foster_id, pet_id)
-    elsif gets.chomp.downcase == 'n'
-      select_foster_id
-    elsif gets.chomp.downcase == 'x'
-      puts "Goodbye"
-    else
-      select_pet
-    end
+    response = gets.chomp
+      case response
+      when "y"
+        assign_pet_to_home(foster_id, pet_id)
+      when 'n'
+        select_foster_id
+      when 'x'
+        puts "Goodbye"
+      else
+        select_pet
+      end
   end
 
   def assign_pet_to_home(f_id, p_id)
