@@ -210,7 +210,7 @@ class CommandLine
     puts Rainbow("Are you sure you want to remove the #{Foster.find(f_id).name} from the database?").white.background(0).bright
     puts "\n\t1 - Yes"
     puts "\t2 - No"
-    puts "\n\t0 - Exit"
+    puts Rainbow("\n\t0 - Exit").red
 
     choice = gets.chomp
 
@@ -402,13 +402,13 @@ class CommandLine
     clear_term
     curr_foster = Foster.all.map(&:id)
 
-    puts "#{Animal.find(a_id).name} does not have a foster."
-    puts 'Please either select from the fosters below or you may remove the animal from the database.'
+    puts Rainbow("#{Animal.find(a_id).name} does not have a foster.").white.background(0).bright
+    puts Rainbow('Please either select from the fosters below or you may remove the animal from the database.').white.background(0).bright
     choices = Foster.all.map { |f| "\t#{f.id} - #{f.name}" }
     puts ''
     puts choices
     puts "\n\tR - Remove"
-    puts "\t0 - Exit"
+    puts Rainbow("\t0 - Exit").red
 
     response = gets.chomp
     if response == '0'
@@ -457,7 +457,7 @@ class CommandLine
       puts "\t#{f.id} - #{f.name}"
     end
     puts "\n\tR - Remove"
-    puts "\t0 - Exit"
+    puts Rainbow("\t0 - Exit").red
     response = gets.chomp
     if response == '0'
       puts 'Goodbye.'
