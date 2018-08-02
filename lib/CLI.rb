@@ -178,7 +178,6 @@ end
   end
 
 # method to give choices for fosters
-# method to give choices for fosters
 def foster_options(f_id)
   clear_term
   puts Rainbow("Hello #{Foster.find(f_id).name}.").white.background(0).bright
@@ -345,14 +344,16 @@ end
           end
     else
       avail_anim = []
+      unassaigned_an = []
       puts Rainbow("The following animals are associated with your shelter with the name of the foster home if applicable.").white.background(0).bright
       puts Rainbow("Please select an animal to reassign the foster home, remove the foster home, or remove the animal from this system.").white.background(0).bright
-      Animal.where(shelter_id: s_id).map do |a|
-        avail_anim << a.id
+      Animal.where(shelter_id: s_id).select do |a|
         if a.foster == nil
           puts "\t#{a.id} - #{a.name} - available to foster"
+          unassaigned_an << a.id
         else
           puts "\t#{a.id} - #{a.name} - #{a.foster.name}"
+          avail_anim << a.id
         end
       end
       puts Rainbow("\n\t0. Exit").red
@@ -361,28 +362,47 @@ end
         puts "Goodbye"
       elsif avail_anim.include?(choice.to_i)
         shelter_reassign_or_remove(s_id, choice)
+      elsif unassaigned_an.include?(choice.to_i)
+        shelter_initial_assign_to_foster(s_id, choice)
       else
         shelters_show_list_of_foster_homes(s_id)
       end
     end
   end
 
+  def shelter_initial_assign_to_foster(s_id, a_id)
+    clear_term
+    curr_foster = Foster.all.map {|f| f.id}
+
+    puts "#{Animal.find(a_id).name} does not have a foster."
+    puts "Please select from the fosters below."
+    choices = Foster.all.map { |f| "\t#{f.id} - #{f.name}" }
+    puts ""
+    puts choices
+    puts "\n\t0 - Exit"
+
+    response = gets.chomp
+    if response == "0"
+      puts "Goodbye"
+    elsif curr_foster.include?(response.to_i)
+      Animal.find(a_id).update(foster_id: response.to_i)
+      puts "#{Animal.find(a_id).name} now lives with the #{Animal.find(a_id).foster.name}."
+    else
+      shelter_initial_assign_to_foster(s_id, a_id)
+    end
+  end
+
   def shelter_reassign_or_remove(s_id, a_id)
     clear_term
-    puts Rainbow("Please select from the following options for #{a_id.name}.").white.background(0).bright
-    puts "\n\t1. Reassign foster home"
-    puts "\t2. Remove the foster home"
-    puts "\t3. Remove the animal from this system"
+    puts Rainbow("Please select from the following options for #{Animal.find(a_id).name}.").white.background(0).bright
+    puts "\n\t1. Reassign to a foster home or remove from a foster home."
+    puts "\t2. Remove the animal from this system"
     puts Rainbow("\n\t0. Exit").red
     choice = gets.chomp
     case choice
     when "1"
-      #shelter_reassign_to_foster
-        #this is an update method
+      shelter_reassign_to_foster(s_id, a_id)
     when "2"
-      #shelter_remove_foster_from_animal
-        #this is an update method
-    when "3"
       animal_destroy(a_id)
     when "0"
       puts "Goodbye"
@@ -391,6 +411,40 @@ end
     end
   end
 
+  def shelter_reassign_to_foster(s_id, a_id)
+    clear_term
+    puts "#{Animal.find(a_id).name} is currently with the #{Animal.find(a_id).foster.name}."
+    puts "Which foster family would you like to resassign this animal to?"
+    puts "If none, select R to remove from foster home.\n"
+
+    avail_fosters = []
+
+    Foster.all.select do |f|
+      f.id != Animal.find(a_id).foster_id
+    end.each do |f|
+      avail_fosters << f.id
+      puts "\t#{f.id} - #{f.name}"
+    end
+    puts "\tR - Remove"
+    puts "\n\t0 - Exit"
+    response = gets.chomp
+    if response == "0"
+      puts "Goodbye."
+    elsif response.downcase == "r"
+      puts "#{Animal.find(a_id).name} is no longer assigned to #{Animal.find(a_id).foster.name}."
+      Animal.find(a_id).update(foster_id: nil)
+    elsif avail_fosters.include?(response.to_i)
+      Animal.find(a_id).update(foster_id: response)
+      puts "#{Animal.find(a_id).name} has been reassigned to #{Animal.find(a_id).foster.name}."
+    else
+      shelter_reassign_to_foster(s_id, a_id)
+    end
+  end
+
+  def shelter_remove_foster_from_animal(s_id, a_id)
+    clear_term
+
+  end
 # this method iterates through all avaialble stray animals and sorts them by Shelter ID
 # This method verifies the Shelter
 # Method asks if they are willing to shelter a named stray animal,
