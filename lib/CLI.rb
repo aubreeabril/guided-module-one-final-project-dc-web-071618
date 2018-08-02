@@ -169,7 +169,8 @@ end
     puts Rainbow("Hello #{Foster.find(f_id).name}.").white.background(0).bright
     puts Rainbow("How may we help you?").white.background(0).bright
     puts "\t1. Select an animal to foster."
-    puts "\t2. Review your current pets.\n"
+    puts "\t2. Review your current pets."
+    puts "\t3. Remove yourself from the database.\n"
     puts Rainbow("\n\t0. Exit").red
     choice = gets.chomp.downcase
     case choice
@@ -177,12 +178,20 @@ end
       foster_select_pet(f_id)
     when "2"
       foster_show_list_of_animals_by_shelter(f_id)
+    when "3"
+      foster_remove(f_id)
     when "0"
       puts "Goodbye"
     else
       foster_options(f_id)
     end
 end
+# allow a foster to remove itself from the database, sets foster_id of pets previously assigned to them to nil
+  def foster_remove(f_id)
+    Foster.destroy(f_id)
+    puts Rainbow("Thank you. You have been removed from our records.").white.background(0).bright
+    Animal.where(foster_id: f_id).update(foster_id: nil)
+  end
 
   def foster_show_list_of_animals_by_shelter(f_id)
     puts Rainbow("Below is a list of all your current animals, and their associated shelters").white.background(0).bright
