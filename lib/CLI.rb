@@ -1,3 +1,5 @@
+
+
 ##This Ruby application allows multiple animal shelters to coordinate all availble placements for strays
 #by sharing data between all area animal shelters and all registered foster homes
 #Users are able to deterimine the best placement for each stray animal using
@@ -17,15 +19,15 @@ attr_accessor :species, :name
 
 # Greet Users so they know they are in the correct application
   def greet
-    puts "Welcome, you are in the right place to get help with Stray Pet Placement."
+    puts Rainbow("Welcome, you are in the right place to get help with Stray Pet Placement.").white.background(0).bright
     stray?
   end
   # Clarify that user is looking for Stray pet placement or something else
   def stray?
-    puts "Do you have a stray pet that needs to be placed into care?"
+    puts Rainbow("Do you have a stray pet that needs to be placed into care?").white.background(0).bright
     puts "\t1. Yes"
-    puts "\t2. No\n\n"
-    puts "\t0. Exit"
+    puts "\t2. No\n"
+    puts Rainbow("\n\t0. Exit").red
   # Mwthod changes all responses to lc, analyzes response and route user accordingly
   # Yes responses are sent to the Species method
   #No responses to the other_options method and x is sent to the Goodbye method
@@ -47,10 +49,10 @@ attr_accessor :species, :name
 end
 
 def other_options
-  puts "Are you a shelter or a family looking to foster?\n"
-  puts "\t1. Shelter"
-  puts "\t2. Foster\n\n"
-  puts "\t0. Exit"
+  puts Rainbow("Are you a shelter or a family looking to foster?").white.background(0).bright
+  puts "\n\t1. Shelter"
+  puts "\t2. Foster\n"
+  puts Rainbow("\n\t0. Exit").red
   answer = gets.chomp
   case answer
   when "2"
@@ -71,7 +73,7 @@ end
 
   def animal_species?
     array =["1", "2", "3"]
-    puts "What kind of animal is this?"
+    puts Rainbow("What kind of animal is this?").white.background(0).bright
     puts "\t1. Cat"
     puts "\t2. Dog"
     puts "\t3. Bird"
@@ -94,9 +96,11 @@ end
   #identification data and adds a human element.
   #the "thank you" message provides a chance to verify the data before it is added
     def animal_name?(species)
-      puts "Everyone needs a name!\nPlease give this stray animal a name."
+      puts Rainbow("Everyone needs a name!").white.background(0).bright
+      puts Rainbow("Please give this stray animal a name.").white.background(0).bright
       name = gets.chomp
-      puts "Thank you for registering the #{species}, #{name}.\nIs this accurate?"
+      puts Rainbow("Thank you for registering this #{species} named #{name}.").white.background(0).bright
+      puts Rainbow("Is this accurate?").white.background(0).bright
       puts "\t1. Yes"
       puts "\t2. No"
       if gets.chomp == "1"
@@ -111,8 +115,8 @@ end
 #The name and the ID number provide a two step authentication for each entry
   def animal_create(name, species)
     a1 = Animal.create(name: name, species: species)
-    puts "#{a1.name} has been assigned a stray animal tracking id of #{a1.id}."
-    puts "Please use the name #{a1.name} and id of #{a1.id} when inquiring about this stray. "
+    puts Rainbow("#{a1.name} has been assigned a stray animal tracking id of #{a1.id}.").white.background(0).bright
+    puts Rainbow("Please use the name").white.background(0).bright #{a1.name} and id of #{a1.id} when inquiring about this stray.").white.background(0).bright
   end
   #---------- Foster methods
   #Foster care providers are an important of the shelter system.
@@ -120,9 +124,9 @@ end
   #after providing their name, they can locate their id
 
     def create_foster
-      puts "Please enter your name."
+      puts Rainbow("Please enter your name.").white.background(0).bright
       Foster.create(name: gets.chomp)
-      puts "Welcome #{Foster.last.name}."
+      puts Rainbow("Welcome #{Foster.last.name}.").white.background(0).bright
       select_foster_id
     end
   # the next step has the Foster family enter their ID if they are registered or
@@ -132,14 +136,14 @@ end
       f.id
     end
 
-    puts "Please select your foster ID."
+    puts Rainbow("Please select your foster ID.").white.background(0).bright
     choices = Foster.all.map do |f|
       "\t#{f.id} - #{f.name}"
     end
 
     puts choices
     puts "\n\tN - New foster home"
-    puts "\t0 - Exit"
+    puts Rainbow("\n\t0. Exit").red
 
     response = gets.chomp
     if curr_fosters.include?(response.to_i)
@@ -156,16 +160,18 @@ end
 
 # method to give choices for fosters
   def foster_options(f_id)
-    puts "Hello #{Foster.find(f_id).name}.\nHow may we help you?"
+    puts Rainbow("Hello #{Foster.find(f_id).name}.").white.background(0).bright
+    puts Rainbow("How may we help you?").white.background(0).bright
     puts "\t1. Select an animal to foster."
-    puts "\t2. New method listing current pets?\n\n"
-    puts "\t0. Exit"
+    puts "\t2. New method listing current pets?\n"
+    puts Rainbow("\n\t0. Exit").red
     choice = gets.chomp.downcase
     case choice
     when "1"
       foster_select_pet(f_id)
     when "2"
-      puts "Another method to show shelters and current pets?"
+      puts "Sorry, but this feature is still under construction"
+      #WE NEED A puts FOR "Another method to show shelters and current pets?"
     when "0"
       puts "Goodbye"
     else
@@ -183,10 +189,12 @@ end
       end
       puts choices
       pet_id = gets.chomp
-      puts "Thank you #{Foster.find(foster_id).name} family. \nYou want to foster #{Animal.find(pet_id).name}. \nIs this correct?"
+      puts Rainbow("Thank you #{Foster.find(foster_id).name} family.").white.background(0).bright
+      puts Rainbow("It looks like you want to foster #{Animal.find(pet_id).name}.").white.background(0).bright
+      puts Rainbow("Is this correct?").white.background(0).bright
       puts "\t1. Yes"
-      puts "\t2. No\n\n"
-      puts "\t0. Exit"
+      puts "\t2. No\n"
+      puts Rainbow("\n\t0. Exit").red
       response = gets.chomp
       case response
       when"1"
@@ -203,7 +211,7 @@ end
   #If not,they are again asked about their foster family status or sent to the Goodbye method
     def assign_pet_to_home(f_id, p_id)
       Animal.find(p_id).update(foster_id: f_id)
-      puts "#{Animal.find(p_id).name} now lives with the #{Foster.find(f_id).name}."
+      puts Rainbow("#{Animal.find(p_id).name} now lives with the #{Foster.find(f_id).name}.").white.background(0).bright
     end
 
   #--------- Shelter methods
@@ -216,9 +224,9 @@ end
 
     def shelter_create
       #Shelter Users are asked to selected their ID if already registered
-      puts "Please enter the name of your shelter below:"
+      puts Rainbow("Please enter the name of your shelter below:").white.background(0).bright
       Shelter.create(name: gets.chomp)
-      puts "Welcome #{Shelter.last.name}."
+      puts Rainbow("Welcome #{Shelter.last.name}.").white.background(0).bright
       shelter_select_id
     end
 
@@ -231,7 +239,8 @@ end
       curr_shelters = Shelter.all.map do |s| s.id
       end
 
-      puts "Please select your shelter ID from the list below by entering your shelter's ID. \n If you do not see your shelter listed and would like to be entered into our systems, enter 'N' for New."
+      puts Rainbow("Please select your shelter ID from the list below by entering your shelter's ID.").white.background(0).bright
+      puts Rainbow("If you do not see your shelter listed and would like to be entered into our systems, enter 'N' for New.").white.background(0).bright
 
       choices = Shelter.all.map do |s|
         "\t#{s.id} - #{s.name}"
@@ -240,7 +249,7 @@ end
       puts "\n"
       puts choices
       puts "\tN - New shelter\n\n"
-      puts "\t0. Exit"
+      puts Rainbow("\n\t0. Exit").red
 
       answer = gets.chomp
       if curr_shelters.include?(answer.to_i)
@@ -256,10 +265,13 @@ end
     end
 
     def shelter_options(s_id)
-      puts "Hello #{Shelter.find(s_id).name}. \nHow may we help you? \nYou may select an animal for your shelter or view a list of foster homes currently fostering your shelter's animals. \nPlease select from the options below:"
+      puts Rainbow("Hello #{Shelter.find(s_id).name}.").white.background(0).bright
+      puts Rainbow("How may we help you?").white.background(0).bright
+      puts Rainbow("You may select an animal for your shelter or view a list of foster homes currently fostering your shelter's animals.").white.background(0).bright
+      puts Rainbow("Please select from the options below:").white.background(0).bright
       puts "\n\t1. Select an animal for your shelter"
       puts "\t2. View a list of homes fostering your shelter's animals"
-      puts "\n\t0. Exit"
+      puts Rainbow("\n\t0. Exit").red
       choice = gets.chomp
 
       if choice == "1"
@@ -275,20 +287,25 @@ end
 # If this option is selected, A list of all the shelter's animals
 #currently in Foster care is provided, sorted by foster family
   def shelters_show_list_of_foster_homes_by_shelter(s_id)
-    puts "The following animals associated with your shelter are being fostered by the indicated families:\n"
+    shelters_animals = Animal.where(shelter_id: s_id).map {|p| puts "\t#{p.name} - #{p.foster.name}"}
+    if shelters_animals == []
+      puts Rainbow("Looks like no one is currently fostering your pets").white.background(0).bright
+    else
+      puts Rainbow("The following animals associated with your shelter are being fostered by the indicated families:").white.background(0).bright
+      # shelters_animals
+      Animal.where(shelter_id: s_id).map {|p| puts "\t#{p.name} - #{p.foster.name}"}
+      puts Rainbow("Would you like to continue using our system or have you completed your tasks?").white.background(0).bright
+      puts Rainbow("Please select from the options below:").white.background(0).bright
+      puts "\n\t1. Return to the shelter menu"
+      puts Rainbow("\n\t0. Exit").red
+      choice = gets.chomp
 
-    Animal.where(shelter_id: s_id).map {|p| puts "\t#{p.name} - #{p.foster.name}"}
-
-    puts "Would you like to continue using our system or have you completed your tasks?\nPlease select from the options below:"
-    puts "\n\t 1. Return to the shelter menu"
-    puts "\n\t 0. Exit"
-    choice = gets.chomp
-
-    if choice == "1"
-      shelter_options(s_id)
-    elsif choice == "0"
-      puts "Goodbye"
-    else shelters_show_list_of_foster_homes_by_shelter(s_id)
+      if choice == "1"
+        shelter_options(s_id)
+      elsif choice == "0"
+        puts "Goodbye"
+      else shelters_show_list_of_foster_homes_by_shelter(s_id)
+      end
     end
   end
 
@@ -303,19 +320,21 @@ end
       current_animals = Animal.all.map do |a|
         a.id
       end
-      puts "Please enter the number of the animal you wish to associate with your facility. You may select from the animals below:\n"
+      puts Rainbow("Please enter the number of the animal you wish to associate with your facility.").white.background(0).bright
+      puts Rainbow("You may select from the animals below:").white.background(0).bright
+      puts ""
       choices = Animal.all.map do |a|
         "\t#{a.id} - #{a.name}"
       end
       puts ""
       puts choices
-      puts "\n\t 0. Exit"
+      puts Rainbow("\n\t0. Exit").red
 
       pet_id = gets.chomp
       if pet_id == "0"
         puts "Goodbye"
       elsif current_animals.include?(pet_id.to_i)
-        puts "\n#{Shelter.find(s_id).name} is a warm welcoming place, even to animals like #{Animal.find(pet_id).name}. Are you sure you would like to add #{Animal.find(pet_id).name} to your animals?\n"
+        puts Rainbow ("\n#{Shelter.find(s_id).name} is a warm welcoming place, even to animals like #{Animal.find(pet_id).name}. Are you sure you would like to add #{Animal.find(pet_id).name} to your animals?").white.background(0).bright
         puts "\n\t1. Yes"
         puts "\t2. No"
           if gets.chomp == "1"
@@ -332,7 +351,9 @@ end
 # And a unique shelter ID is assigned to this placement
     def assign_pet_to_shelter(s_id, p_id)
       Animal.find(p_id).update(shelter_id: s_id)
-      puts "\nThank you. \n#{Animal.find(p_id).name} is now under #{Shelter.find(s_id).name}'s watchful eyes."
+      puts ""
+      puts Rainbow("Thank you.").white.background(0).bright
+      puts Rainbow("#{Animal.find(p_id).name} is now under #{Shelter.find(s_id).name}'s watchful eyes.").white.background(0).bright
     end
     ######______________######______check with John and Aubree about process???????
 #If the shelter is not able to accept the stray, they can ask for a
