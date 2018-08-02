@@ -116,8 +116,14 @@ end
   def animal_create(name, species)
     a1 = Animal.create(name: name, species: species)
     puts Rainbow("#{a1.name} has been assigned a stray animal tracking id of #{a1.id}.").white.background(0).bright
-    puts Rainbow("Please use the name").white.background(0).bright #{a1.name} and id of #{a1.id} when inquiring about this stray.").white.background(0).bright
+    puts Rainbow("Please use the name #{a1.name} and id of #{a1.id} when inquiring about this stray.").white.background(0).bright
   end
+
+  def animal_destroy
+    #deletes an Animal instance
+
+  end
+
   #---------- Foster methods
   #Foster care providers are an important of the shelter system.
   #First we identify if the Foster family is already registered in the system
@@ -163,15 +169,14 @@ end
     puts Rainbow("Hello #{Foster.find(f_id).name}.").white.background(0).bright
     puts Rainbow("How may we help you?").white.background(0).bright
     puts "\t1. Select an animal to foster."
-    puts "\t2. New method listing current pets?\n"
+    puts "\t2. Review your current pets.\n"
     puts Rainbow("\n\t0. Exit").red
     choice = gets.chomp.downcase
     case choice
     when "1"
       foster_select_pet(f_id)
     when "2"
-      puts "Sorry, but this feature is still under construction"
-      #WE NEED A puts FOR "Another method to show shelters and current pets?"
+      foster_show_list_of_animals_by_shelter(f_id)
     when "0"
       puts "Goodbye"
     else
@@ -179,6 +184,12 @@ end
     end
 end
 
+  def foster_show_list_of_animals_by_shelter(f_id)
+    puts Rainbow("Below is a list of all your current animals, and their associated shelters").white.background(0).bright
+
+    Animal.where(foster_id: f_id).map { |a| puts "#{a.name} - #{a.shelter.name}" }
+
+  end
 
   # this code allows the registered Foster families to
   #select an availble stray needing housing
@@ -286,10 +297,13 @@ end
     end
 # If this option is selected, A list of all the shelter's animals
 #currently in Foster care is provided, sorted by foster family
+
   def shelters_show_list_of_foster_homes_by_shelter(s_id)
     shelters_animals = Animal.where(shelter_id: s_id).map {|p| puts "\t#{p.name} - #{p.foster.name}"}
     if shelters_animals == []
       puts Rainbow("Looks like no one is currently fostering your pets").white.background(0).bright
+
+
     else
       puts Rainbow("The following animals associated with your shelter are being fostered by the indicated families:").white.background(0).bright
       # shelters_animals
