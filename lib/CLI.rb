@@ -146,8 +146,10 @@ end
 
     def create_foster
       clear_term
-      puts Rainbow("Please enter your name.").white.background(0).bright
-      Foster.create(name: gets.chomp)
+      puts Rainbow("Please enter your last name.").white.background(0).bright
+      response = gets.chomp
+      real_name = "#{response}s"
+      Foster.create(name: real_name)
       puts Rainbow("Welcome #{Foster.last.name}.").white.background(0).bright
       select_foster_id
     end
@@ -159,14 +161,14 @@ end
       f.id
     end
 
-    puts Rainbow("Please select your foster ID.").white.background(0).bright
+    puts Rainbow("Please select your foster ID.\n").white.background(0).bright
     choices = Foster.all.map do |f|
       "\t#{f.id} - #{f.name}"
     end
 
     puts choices
     puts "\n\tN - New foster home"
-    puts Rainbow("\n\t0. Exit").red
+    puts Rainbow("\t0 - Exit").red
 
     response = gets.chomp
     if curr_fosters.include?(response.to_i)
