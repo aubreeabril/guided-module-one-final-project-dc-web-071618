@@ -29,9 +29,9 @@ class CommandLine
   def who_are_you
     clear_term
     puts Rainbow('Are you a shelter or a family looking to foster?').white.background(0).bright
-    puts "\n\t1. Shelter"
-    puts "\t2. Foster\n"
-    puts Rainbow("\n\t0. Exit").red
+    puts "\n\t1 - Shelter"
+    puts "\t2 - Foster\n"
+    puts Rainbow("\n\t0 - Exit").red
     answer = gets.chomp
     case answer
     when '2'
@@ -49,9 +49,9 @@ class CommandLine
   def stray?(s_id)
     clear_term
     puts Rainbow('Do you have a stray pet that needs to be placed into care?').white.background(0).bright
-    puts "\n\t1. Yes"
-    puts "\t2. No"
-    puts Rainbow("\n\t0. Exit").red
+    puts "\n\t1 - Yes"
+    puts "\t2 -  No"
+    puts Rainbow("\n\t0 - Exit").red
     # Mwthod changes all responses to lc, analyzes response and route user accordingly
     # Yes responses are sent to the Species method
     # No responses to the other_options method and x is sent to the Goodbye method
@@ -81,9 +81,9 @@ class CommandLine
     clear_term
     array = %w[1 2 3]
     puts Rainbow('What kind of animal is this?').white.background(0).bright
-    puts "\n\t1. Cat"
-    puts "\t2. Dog"
-    puts "\t3. Bird"
+    puts "\n\t1 - Cat"
+    puts "\t2 - Dog"
+    puts "\t3 - Bird"
     species_answer = gets.chomp
     if array.include?(species_answer)
       case species_answer
@@ -110,8 +110,8 @@ class CommandLine
     clear_term
     puts Rainbow("Thank you for registering this #{species} named #{name}.").white.background(0).bright
     puts Rainbow('Is this accurate?').white.background(0).bright
-    puts "\n\t1. Yes"
-    puts "\t2. No"
+    puts "\n\t1 - Yes"
+    puts "\t2 - No"
     if gets.chomp == '1'
       animal_create(name, species, s_id)
     else
@@ -185,10 +185,10 @@ class CommandLine
     clear_term
     puts Rainbow("Hello #{Foster.find(f_id).name}.").white.background(0).bright
     puts Rainbow('How may we help you?').white.background(0).bright
-    puts "\n\t1. Select an animal to foster."
-    puts "\t2. Review your current pets."
-    puts "\t3. Remove yourself from the database.\n"
-    puts Rainbow("\n\t0. Exit").red
+    puts "\n\t1 - Select an animal to foster."
+    puts "\t2 - Review your current pets."
+    puts "\t3 - Remove yourself from the database.\n"
+    puts Rainbow("\n\t0 - Exit").red
     choice = gets.chomp.downcase
     case choice
     when '1'
@@ -207,9 +207,25 @@ class CommandLine
   # allow a foster to remove itself from the database, sets foster_id of pets previously assigned to them to nil
   def foster_remove(f_id)
     clear_term
+    puts Rainbow("Are you sure you want to remove the #{Foster.find(f_id).name} from the database?").white.background(0).bright
+    puts "\n\t1 - Yes"
+    puts "\t2 - No"
+    puts "\n\t0 - Exit"
+
+    choice = gets.chomp
+
+    case choice
+    when "1"
     Foster.destroy(f_id)
     puts Rainbow('Thank you. You have been removed from our records.').white.background(0).bright
     Animal.where(foster_id: f_id).update(foster_id: nil)
+    when "2"
+      foster_options(f_id)
+    when "0"
+      puts "Goodbye"
+    else
+      foster_remove(f_id)
+    end
   end
 
   def foster_show_list_of_animals_by_shelter(f_id)
@@ -224,6 +240,7 @@ class CommandLine
   # this information is verified before proceding
   def foster_select_pet(foster_id)
     puts Rainbow('The following animals do not have a foster home. Please select an animal.').white.background(0).bright
+    puts ""
     unassigned_an = Animal.all.select { |a| a.foster_id.nil? }
     check = unassigned_an.map(&:id)
     choices = unassigned_an.map do |a|
@@ -235,7 +252,7 @@ class CommandLine
       puts Rainbow("Thank you #{Foster.find(foster_id).name} family.").white.background(0).bright
       puts Rainbow("It looks like you want to foster #{Animal.find(pet_id).name}.").white.background(0).bright
       puts Rainbow('Is this correct?').white.background(0).bright
-      puts "\t1 - Yes"
+      puts "\n\t1 - Yes"
       puts "\t2 - No\n"
       puts Rainbow("\n\t0 - Exit").red
       response = gets.chomp
@@ -296,7 +313,7 @@ class CommandLine
     puts "\n"
     puts choices
     puts "\n\tN - New shelter"
-    puts Rainbow("\t0. Exit").red
+    puts Rainbow("\t0 - Exit").red
 
     answer = gets.chomp
     if curr_shelters.include?(answer.to_i)
@@ -318,9 +335,9 @@ class CommandLine
     puts Rainbow('You may view a list of animals associated with your shelter.').white.background(0).bright
     puts Rainbow('Please select from the options below:').white.background(0).bright
 
-    puts "\n\t1. View a list of animals associated with your shelter"
-    puts "\t2. Add a stray to the database"
-    puts Rainbow("\n\t0. Exit").red
+    puts "\n\t1 - View a list of animals associated with your shelter"
+    puts "\t2 - Add a stray to the database"
+    puts Rainbow("\n\t0 - Exit").red
     choice = gets.chomp
 
     if choice == '1'
@@ -343,8 +360,8 @@ class CommandLine
       puts Rainbow('Your shelter is empty.').white.background(0).bright
       puts Rainbow('Would you like to return to the shelter menu?').white.background(0).bright
 
-      puts "\n\t1. Return to the shelter menu"
-      puts Rainbow("\n\t0. Exit").red
+      puts "\n\t1 - Return to the shelter menu"
+      puts Rainbow("\n\t0 - Exit").red
       choice = gets.chomp
       if choice == '1'
         shelter_options(s_id)
@@ -357,6 +374,7 @@ class CommandLine
       unassaigned_an = []
       puts Rainbow('The following animals are associated with your shelter with the name of the foster home if applicable.').white.background(0).bright
       puts Rainbow('Please select an animal to make an initial foster assignment, reassign the foster home, remove the foster home, or remove the animal from this system.').white.background(0).bright
+      puts ""
       Animal.where(shelter_id: s_id).select do |a|
         if a.foster.nil?
           puts "\t#{a.id} - #{a.name} - available to foster"
@@ -366,7 +384,7 @@ class CommandLine
           avail_anim << a.id
         end
       end
-      puts Rainbow("\n\t0. Exit").red
+      puts Rainbow("\n\t0 - Exit").red
       choice = gets.chomp
       if choice == '0'
         puts 'Goodbye'
@@ -408,8 +426,8 @@ class CommandLine
   def shelter_reassign_or_remove(s_id, a_id)
     clear_term
     puts Rainbow("Please select from the following options for #{Animal.find(a_id).name}.").white.background(0).bright
-    puts "\n\t1. Reassign to a foster home or remove from a foster home."
-    puts "\t2. Remove the animal from this system"
+    puts "\n\t1 - Reassign to a foster home or remove from a foster home."
+    puts "\t2 - Remove the animal from this system"
     puts Rainbow("\n\t0. Exit").red
     choice = gets.chomp
     case choice
@@ -426,10 +444,10 @@ class CommandLine
 
   def shelter_reassign_to_foster(s_id, a_id)
     clear_term
-    puts "#{Animal.find(a_id).name} is currently with the #{Animal.find(a_id).foster.name}."
-    puts 'Which foster family would you like to resassign this animal to?'
-    puts "If none, select R to remove from foster home.\n"
-
+    puts Rainbow("#{Animal.find(a_id).name} is currently with the #{Animal.find(a_id).foster.name}.").white.background(0).bright
+    puts Rainbow("Which foster family would you like to resassign this animal to?").white.background(0).bright
+    puts Rainbow("If none, select R to remove from foster home.").white.background(0).bright
+    puts ""
     avail_fosters = []
 
     Foster.all.reject do |f|
@@ -438,8 +456,8 @@ class CommandLine
       avail_fosters << f.id
       puts "\t#{f.id} - #{f.name}"
     end
-    puts "\tR - Remove"
-    puts "\n\t0 - Exit"
+    puts "\n\tR - Remove"
+    puts "\t0 - Exit"
     response = gets.chomp
     if response == '0'
       puts 'Goodbye.'
@@ -454,9 +472,6 @@ class CommandLine
     end
   end
 
-  def shelter_remove_foster_from_animal(_s_id, _a_id)
-    clear_term
-  end
   # this method iterates through all avaialble stray animals and sorts them by Shelter ID
   # This method verifies the Shelter
   # Method asks if they are willing to shelter a named stray animal,
@@ -482,8 +497,8 @@ class CommandLine
       puts 'Goodbye'
     elsif current_animals.include?(pet_id.to_i)
       puts Rainbow("\n#{Shelter.find(s_id).name} is a warm welcoming place, even to animals like #{Animal.find(pet_id).name} Are you sure you would like to add #{Animal.find(pet_id).name} to your animals?").white.background(0).bright
-      puts "\n\t1. Yes"
-      puts "\t2. No"
+      puts "\n\t1 - Yes"
+      puts "\t2 - No"
       if gets.chomp == '1'
         assign_pet_to_shelter(s_id, pet_id)
       elsif gets.chomp == '2'
