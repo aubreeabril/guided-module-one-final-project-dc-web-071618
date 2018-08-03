@@ -68,7 +68,7 @@ class CommandLine
 
   def animal_species?(s_id)
     clear_term
-    array = %w[1 2 3]
+    array = ['1', '2', '3']
     puts Rainbow('What kind of animal is this?').white.background(0).bright
     puts "\n\t1 - Cat"
     puts "\t2 - Dog"
@@ -123,6 +123,7 @@ class CommandLine
   def animal_destroy(a_id)
     puts "#{Animal.find(a_id).name} has been removed from the system."
     Animal.destroy(a_id)
+    who_are_you
     # deletes an Animal instance
   end
 
@@ -145,7 +146,9 @@ class CommandLine
   # provides them the opportunity to register as a Foster care family
   def select_foster_id
     clear_term
-    curr_fosters = Foster.all.map(&:id)
+    curr_fosters = Foster.all.map do |f|
+      f.id
+    end
 
     puts Rainbow("Please select your foster ID.\n").white.background(0).bright
     choices = Foster.all.map do |f|
@@ -237,7 +240,9 @@ class CommandLine
     puts Rainbow('The following animals do not have a foster home. Please select an animal.').white.background(0).bright
     puts ""
     unassigned_an = Animal.all.select { |a| a.foster_id.nil? }
-    check = unassigned_an.map(&:id)
+    check = unassigned_an.map do |a|
+      a.id
+    end
     choices = unassigned_an.map do |a|
       "\t#{a.id} - #{a.name} - #{a.species} - #{a.shelter.name}"
     end
@@ -395,7 +400,7 @@ class CommandLine
 
   def shelter_initial_assign_to_foster(s_id, a_id)
     clear_term
-    curr_foster = Foster.all.map(&:id)
+    curr_foster = Foster.all.map { |f| f.id }
 
     puts Rainbow("#{Animal.find(a_id).name} does not have a foster.").white.background(0).bright
     puts Rainbow('Please either select from the fosters below or you may remove the animal from the database.').white.background(0).bright
