@@ -171,7 +171,6 @@ class CommandLine
 
   # method to give choices for fosters
   def foster_options(f_id)
-    clear_term
     puts Rainbow("Hello #{Foster.find(f_id).name}.").white.background(0).bright
     puts Rainbow('How may we help you?').white.background(0).bright
     puts "\n\t1 - Select an animal to foster."
@@ -219,10 +218,17 @@ class CommandLine
 
   def foster_show_list_of_animals_by_shelter(f_id)
     clear_term
-    puts Rainbow('Below is a list of all your current animals, and their associated shelters').white.background(0).bright
-
-    Animal.where(foster_id: f_id).map { |a| puts "#{a.name} - #{a.shelter.name}" }
-  end
+      if Animal.where(foster_id: f_id).count == 0
+        puts Rainbow("It looks like you don't currently have any foster pets!").white.background(0).bright
+        foster_options(f_id)
+      else
+        puts Rainbow('Below is a list of all your current animals, and their associated shelters').white.background(0).bright
+        puts ""
+        Animal.where(foster_id: f_id).map { |a| puts "\t#{a.name} - #{a.shelter.name}" }
+        puts ""
+        foster_options(f_id)
+      end
+    end
 
   # this code allows the registered Foster families to
   # select an availble stray needing housing
