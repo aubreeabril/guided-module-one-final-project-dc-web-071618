@@ -120,10 +120,10 @@ class CommandLine
     shelter_options(s_id)
   end
 
-  def animal_destroy(a_id)
+  def animal_destroy(a_id, s_id)
     puts "#{Animal.find(a_id).name} has been removed from the system."
     Animal.destroy(a_id)
-    who_are_you
+    shelter_options(s_id)
     # deletes an Animal instance
   end
 
@@ -417,7 +417,7 @@ class CommandLine
       Animal.find(a_id).update(foster_id: response.to_i)
       puts "#{Animal.find(a_id).name} now lives with the #{Animal.find(a_id).foster.name}."
     elsif response.downcase == 'r'
-      animal_destroy(a_id)
+      animal_destroy(a_id, s_id)
     else
       shelter_initial_assign_to_foster(s_id, a_id)
     end
@@ -434,7 +434,7 @@ class CommandLine
     when '1'
       shelter_reassign_to_foster(s_id, a_id)
     when '2'
-      animal_destroy(a_id)
+      animal_destroy(a_id, s_id)
     when '0'
       puts 'Goodbye'
     else
