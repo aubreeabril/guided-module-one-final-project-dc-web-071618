@@ -14,16 +14,17 @@
 
 ## Future Features
 
-  **Stray Pet Placement** is a work-in-progress with an every-growing set of features.  Currently planned expansions include:
+  **Stray Pet Placement** is a work in progress with an every-growing set of features.  Currently planned expansions include:
 
-    1. Tracking facility capacities
-    2. Monitoring and recording animal disposition
-    3. Expanding the variety of species assignments that can be made
-    4. The ability to leave comments regarding individual animals
+    1. Adjust flow of program so no command exits the program without the user selecting an exit command.
+    2. Tracking facility capacities
+    3. Monitoring and recording animal disposition
+    4. Expanding the variety of species assignments that can be made
+    5. The ability to leave comments regarding individual animals
 
 ## How to use it
 
-  Once inside the **Command Line Interface**, follow the on-screen instructions to interact with the database.  Generally, pressing 0 from most menus will exit the system and retun you to the terminal.
+  Once inside the **Command Line Interface**, follow the on-screen instructions to interact with the database.  Generally, pressing 0 from most menus will exit the system and return you to the terminal.
 
   Feel free to create, read, update, or delete the rows in the database.  If you wish to restore to the initial seed data, delete the file *db/development.db* and enter both `rake db:migrate` and `rake db:seed` into your terminal.
 
@@ -43,7 +44,7 @@
 
 ## Authors
 
-  **Stray Pet Placement** is the work of [Laura Adam (Whynotski)](https://github.com/whynotski), [Aubree Abril(aubreeabirl)](https://github.com/aubreeabril), and [Jon Schulman(DontJar)](https://github.com/DontJar).
+  **Stray Pet Placement** is the work of [Laura Adam (Whynotski)](https://github.com/whynotski), [Aubree Abril(aubreeabril)](https://github.com/aubreeabril), and [Jon Schulman(DontJar)](https://github.com/DontJar).
 
 ## Special thanks
 
