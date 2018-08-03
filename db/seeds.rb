@@ -23,7 +23,7 @@ a9 = Animal.create(name: "Frodo", species: "dog", shelter_id: "4")
 a10 = Animal.create(name: "Pumba", species: "cat", shelter_id: "4")
 a11 = Animal.create(name: "Dunkin Butterbeans", species: "bird", shelter_id: "4")
 a12 = Animal.create(name: "Empress Tzu Tzu", species: "cat", shelter_id: "4")
-a13 = Animal.create(name: "Farrah Pawcett", species: "bird", , shelter_id: "4")
+a13 = Animal.create(name: "Farrah Pawcett", species: "bird", shelter_id: "4")
 a14 = Animal.create(name: "Monsieur Le Colonel Moustache", species: "dog", shelter_id: "5")
 
 # -------fosters

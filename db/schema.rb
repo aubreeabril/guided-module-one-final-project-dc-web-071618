@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 5) do
+ActiveRecord::Schema.define(version: 6) do
 
   create_table "animals", force: :cascade do |t|
     t.string  "name"
@@ -20,7 +20,8 @@ ActiveRecord::Schema.define(version: 5) do
   end
 
   create_table "fosters", force: :cascade do |t|
-    t.string "name"
+    t.string  "name"
+    t.integer "capacity"
   end
 
   create_table "shelters", force: :cascade do |t|

@@ -1,14 +1,4 @@
 
-
-# #This Ruby application allows multiple animal shelters to coordinate all availble placements for strays
-# by sharing data between all area animal shelters and all registered foster homes
-# Users are able to deterimine the best placement for each stray animal using
-# current information about all available options
-
-# This ruby code is designed to interact with users
-# The CLI obtains information about stray animals, animal shelters and
-# foster family status
-
 class CommandLine
   attr_accessor :species, :name
   # create class variables
@@ -244,7 +234,7 @@ class CommandLine
     unassigned_an = Animal.all.select { |a| a.foster_id.nil? }
     check = unassigned_an.map(&:id)
     choices = unassigned_an.map do |a|
-      "\t#{a.id} - #{a.name} - #{a.species}"
+      "\t#{a.id} - #{a.name} - #{a.species} - #{a.shelter.name}"
     end
     puts choices
     pet_id = gets.chomp
