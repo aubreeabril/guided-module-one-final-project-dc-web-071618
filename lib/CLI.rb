@@ -161,7 +161,7 @@ class CommandLine
       foster_options(response)
     elsif response == '0'
       puts 'Goodbye.'
-    elsif response.casecmp('n').zero?
+    elsif response.downcase('n')
       create_foster
     else
       puts 'Please enter a valid ID.'
@@ -315,7 +315,7 @@ class CommandLine
       shelter_options(answer)
     elsif answer == '0'
       puts 'Goodbye'
-    elsif answer.casecmp('n').zero?
+    elsif answer.downcase('n')
       shelter_create
     else
       puts 'Pleae enter a valid ID.'
@@ -411,7 +411,7 @@ class CommandLine
     elsif curr_foster.include?(response.to_i)
       Animal.find(a_id).update(foster_id: response.to_i)
       puts "#{Animal.find(a_id).name} now lives with the #{Animal.find(a_id).foster.name}."
-    elsif response.casecmp('r').zero?
+    elsif response.downcase('r')
       animal_destroy(a_id)
     else
       shelter_initial_assign_to_foster(s_id, a_id)
@@ -456,7 +456,7 @@ class CommandLine
     response = gets.chomp
     if response == '0'
       puts 'Goodbye.'
-    elsif response.casecmp('r').zero?
+    elsif response.downcase('r')
       puts "#{Animal.find(a_id).name} is no longer assigned to #{Animal.find(a_id).foster.name}."
       Animal.find(a_id).update(foster_id: nil)
     elsif avail_fosters.include?(response.to_i)
