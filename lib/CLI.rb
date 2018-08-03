@@ -17,8 +17,7 @@ class CommandLine
   end
 
   def who_are_you
-    clear_term
-    puts Rainbow('Are you a shelter or a family looking to foster?').white.background(0).bright
+    puts Rainbow("Are you a shelter or a family looking to foster?").white.background(0).bright
     puts "\n\t1 - Shelter"
     puts "\t2 - Foster\n"
     puts Rainbow("\n\t0 - Exit").red
